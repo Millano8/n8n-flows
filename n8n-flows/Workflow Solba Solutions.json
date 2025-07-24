@@ -1,0 +1,1660 @@
+{
+  "name": "Workflow Solba Solutions",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        448,
+        -256
+      ],
+      "id": "9e9b7bee-6596-432d-accf-d486e021db81",
+      "name": "Telegram Trigger",
+      "webhookId": "6de5ec13-0c5e-45d5-bc99-be7dacc5ce72",
+      "credentials": {
+        "telegramApi": {
+          "id": "PXS2ShGXVcFSRF7r",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "ca35b516-f4ed-4832-a948-d0bc765bdc8b",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "texto"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "8d438aa4-c2bd-4b49-86ee-7b4a1d716d7b",
+                    "leftValue": "={{ $json.message.voice }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "object",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "audio"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        608,
+        -240
+      ],
+      "id": "bdf87f30-0a9f-4ff5-a221-d6bccdc54da3",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $('Telegram Trigger').item.json.message.voice.file_id}}"
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        480,
+        16
+      ],
+      "id": "7e83a579-0933-4004-a31a-4b1d2a0a950e",
+      "name": "Get a file",
+      "webhookId": "4135859e-43da-43a8-9ab4-1cf46ededbf4",
+      "credentials": {
+        "telegramApi": {
+          "id": "PXS2ShGXVcFSRF7r",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "x-goog-api-key",
+              "value": "AIzaSyAm8j3wx7-B2bFjL5Mxbm361HicTdsG1bQ"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "body": "={   \"contents\": [     {       \"parts\": [         {           \"text\": \"Transcribe este audio, por favor.\"         },         {           \"inline_data\": {             \"mime_type\": \"audio/ogg\",             \"data\": \"{{ $('Extract from File').item.json.data }}\"           }         }       ]     }   ] }",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        704,
+        16
+      ],
+      "id": "4f21b906-9f51-49c4-8421-1ccc701b5780",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "operation": "binaryToPropery",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        576,
+        224
+      ],
+      "id": "a102b8ed-98d5-47e9-9c90-ad9848bf3712",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        848,
+        -112
+      ],
+      "id": "8dd263ce-b989-46a8-a894-af20068545c3",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1HoAP_7sJ13ZeFJjLrAeLQz_le9NgYI11mqIvbW8W6Ss",
+          "mode": "list",
+          "cachedResultName": "Excel Organizativo",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HoAP_7sJ13ZeFJjLrAeLQz_le9NgYI11mqIvbW8W6Ss/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HoAP_7sJ13ZeFJjLrAeLQz_le9NgYI11mqIvbW8W6Ss/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        1408,
+        224
+      ],
+      "id": "26a9ae71-0ccc-49a7-aac9-ea4f7f9d41df",
+      "name": "Obtener Data Excel Organizativo",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "P2yPGMz7LMWjag0k",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const userId = $('Telegram Trigger').first().json.message.from.id;\nconst userName = $('Telegram Trigger').first().json.message.from.first_name;\n\n// Verificar qué entrada llegó\nlet currentMessage;\ntry {\n  const httpResult = $('HTTP Request').first();\n  if (httpResult && httpResult.json.candidates) {\n    currentMessage = httpResult.json.candidates[0].content.parts[0].text;\n  } else {\n    currentMessage = $('Telegram Trigger').first().json.message;\n  }\n} catch (error) {\n  currentMessage = $('Telegram Trigger').first().json.message;\n}\n\nreturn {\n  json: {\n    userAndMessage : {\n    ...$('Telegram Trigger').first().json,\n    user_id: userId,\n    user_name: userName,\n    current_message: currentMessage,\n    timestamp: new Date().toLocaleString('es-AR')\n      }\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1632,
+        0
+      ],
+      "id": "eb9a59b3-eaee-417c-a181-0ad0f0ae2cd7",
+      "name": "Obtener nombre usuario y mensaje"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1WITKgrlHXZiuNnnXXs98aTRlI1ZKSanLuKsYDTiEAts",
+          "mode": "list",
+          "cachedResultName": "Memorias_Chatbot",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1WITKgrlHXZiuNnnXXs98aTRlI1ZKSanLuKsYDTiEAts/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "={{ $('Memoria').item.json.userName }}",
+          "mode": "name"
+        },
+        "options": {
+          "dataLocationOnSheet": {
+            "values": {
+              "rangeDefinition": "specifyRangeA1",
+              "range": "A:E"
+            }
+          },
+          "outputFormatting": {
+            "values": {
+              "general": "UNFORMATTED_VALUE",
+              "date": "FORMATTED_STRING"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        1392,
+        -336
+      ],
+      "id": "ade54e03-26e8-4e0c-94d3-76fd107964cf",
+      "name": "Obtener Memorias",
+      "alwaysOutputData": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "P2yPGMz7LMWjag0k",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Eres un asistente administrativo especializado en procesar mensajes de usuarios para extraer datos de ventas y gestionar flujos de trabajo.\n\n## DATOS DE ENTRADA:\n- **MENSAJE DEL USUARIO**: {{ $json.data.find(item => item.userAndMessage).userAndMessage.current_message.text || $json.data.find(item => item.userAndMessage).userAndMessage.current_message }}\n- **MEMORIA DEL CHAT**: {{ $json.data.find(item => item.chat_history)?.chat_history || 'None' }}\n- **CLIENTES YA INGRESADOS**: {{ $json.data.find(item => item.listaCompleta).listaCompleta.map(c => c.Cliente).join(', ') }}\n\n- **DATOS TOTALES CLIENTES YA INGRESADOS: {{ JSON.stringify($json.data.find(item => item.listaCompleta).listaCompleta) }}\n\n\n\n## INSTRUCCIONES DE PROCESAMIENTO:\n\n### PASO 1: IDENTIFICACIÓN DEL CLIENTE\n1. **Revisar MEMORIA DEL CHAT**: Analiza toda la conversación previa para identificar si ya se mencionó un cliente\n2. **Si NO encuentras cliente en memoria**: Busca e interpreta el nombre del cliente en el MENSAJE DEL USUARIO actual\n3. **Si NO encuentras cliente en ningún lado**: Devuelve inmediatamente: `{\"cliente_encontrado\": false}`\n\n### PASO 2: VALIDACIÓN CONTRA LISTA DE CLIENTES\nUna vez identificado el cliente, compáralo con la lista de CLIENTES YA INGRESADOS considerando:\n- Variaciones en el orden (ej: \"Francisco Millan\" vs \"Millan Francisco\")\n- Abreviaciones (ej: \"Francisco Millan\" vs \"Fran Millan\")\n- Nombres incompletos o parciales\n- Diferencias menores en escritura\n\n### PASO 3: CONSTRUCCIÓN DE LA RESPUESTA (FUSIÓN DE DATOS)\nSi el cliente identificado en el PASO 2 es válido, sigue este proceso para construir el objeto JSON final:\n\n\n1.  **OBTENER DATOS BASE:**\n    *   Busca el registro completo del cliente identificado en el JSON de `DATOS TOTALES CLIENTES YA INGRESADOS`.\n    *   Si encuentras su registro, toma todos sus datos (`Prioridad`, `Producto`, etc.) como la **información base** para tu respuesta.\n    *   Si no encuentras un registro (cliente nuevo), la información base será un objeto con todos los campos en `null`.\n\n2.  **EXTRAER Y FUSIONAR DATOS NUEVOS:**\n    *   Analiza el `MENSAJE DEL USUARIO` y la `MEMORIA DEL CHAT` para extraer cualquier información nueva.\n    *   **REGLA DE FUSIÓN CRÍTICA:** Para cada campo (`Prioridad`, `Producto`, etc.), aplica esta regla:\n        *   Si el mensaje contiene información **NUEVA O ACTUALIZADA** para ese campo, usa esa nueva información.\n        *   Si el mensaje **NO MENCIONA NADA** sobre un campo, **DEBES MANTENER el valor que ya tenías en la información base.** No lo reemplaces con `null`.\n\n3.  **DETERMINAR EL CAMPO 'MOMENTO' (REGLA ESTRICTA):**\n    *   Re-evalúa el campo `Momento` basándote en la intención del `MENSAJE DEL USUARIO` actual y el contexto global.\n    *   Compara esa intención con la siguiente lista y elige la opción que **MEJOR** la describa.\n    *   **DEBES DEVOLVER UNO, Y SÓLO UNO, de los siguientes valores exactos.**\n\n    *Lista de Momentos Válidos:*\n    - Primer Contacto Cliente\n    - Idea de Negocio\n    - En espera de rta del cliente\n    - En espera de rta del proveedor extranjero\n    - Armado de Precio / Negocio\n    - Pedido Confirmado / Armar Pago\n    - Pedidor CERRADO, hacer seguimiento\n\n    *   Si el mensaje no permite determinar un nuevo `Momento`, mantén el valor que obtuviste de la información base. Si no había ninguno, usa el valor por defecto `'Primer Contacto Cliente'`.\n\n## FORMATO DE RESPUESTA:\n\n### Si NO se encuentra cliente:\n```json\n{\n  \"cliente_encontrado\": false\n}\n\n\n### Si se encuentra cliente válido:\n{\n  \"cliente_encontrado\": true,\n  \"cliente\": \"Nombre del Cliente\",\n  \"fecha_inicio\": \"fecha de inicio\",\n  \"prioridad\": \"valor o null\",\n  \"producto\": \"valor o null\",\n  \"responsable_1\": \"valor o null\",\n  \"responsable_2\": \"valor o null\",\n  \"momento\": \"UNO de los valores de la lista predefinida\",\n  \"contacto_proveedores\": \"valor o null\"\n}\n\n\n## CONSIDERACIONES IMPORTANTES:\n- Siempre analiza primero la MEMORIA DEL CHAT completa para obtener contexto\n- El campo \"Cliente\" es el único indispensable\n- SI o SI utiliza uno de los valores de la lista predefinida para el campo 'momento', si el usuario envia algun texto que no se corresponda con ninguno de esos campos, con sentimiento y contextualizacion asigna uno de los mismos.\n- Usa null para campos opcionales que no encuentres\n- Sé flexible en el matching de nombres de clientes\n- Mantén consistencia en los nombres extraídos\n- Los datos encontrados, enviamelos con la primera letra en mayusculas para consistencia\n\n**RESPONDE ÚNICAMENTE CON EL JSON, SIN TEXTO ADICIONAL.**\n\n",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        2272,
+        -48
+      ],
+      "id": "770cfe90-2b20-4e02-a928-e814cbe70514",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        2144,
+        288
+      ],
+      "id": "84edbe62-2a0b-4872-977f-aacc3a0a3b30",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "HYv5xKaJeSjLiOWz",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Obtenemos el array con los datos del historial desde el nodo anterior.\nconst chatHistoryArray = $input.all();\n\n// Creamos un array para almacenar el historial formateado.\nconst formattedHistory = [];\nlet lastMessageTimestamp = null; // Variable para almacenar el timestamp del último mensaje\n\n// Recorremos cada mensaje en el array.\nfor (const message of chatHistoryArray) {\n  // Extraemos el Rol, el Contenido y el TimeStamp de cada mensaje.\n  const role = message.json.Role;\n  const content = message.json.Content;\n  const timestamp = message.json.TimeStamp;\n\n  // Si hay un timestamp válido, lo guardamos como el último.\n  // Asumimos que los mensajes están en orden cronológico ascendente.\n  if (timestamp) {\n    lastMessageTimestamp = timestamp;\n  }\n  \n  // Creamos una línea con el formato \"TimeStamp - Rol: Contenido\"\n  const chat = `${timestamp} - ${role}: ${content}`;\n  formattedHistory.push(chat);\n}\n\n// --- Lógica para verificar el tiempo del último mensaje ---\nlet isLastMessageOlderThan15Minutes = false;\n\nif (lastMessageTimestamp) {\n  // El formato del timestamp es \"DD/MM/YYYY, HH:mm:ss\"\n  const [datePart, timePart] = lastMessageTimestamp.split(', ');\n  const [day, month, year] = datePart.split('/');\n  \n  // Reconstruimos la fecha al formato estándar ISO 8601 (YYYY-MM-DDTHH:mm:ss)\n  const isoTimestamp = `${year}-${month}-${day}T${timePart}`;\n  \n  // `new Date()` es muy fiable parseando el formato ISO.\n  const lastMessageDate = new Date(isoTimestamp);\n  \n  const now = new Date(); // Fecha y hora actuales\n\n  // Verificamos que la fecha sea válida antes de comparar\n  if (!isNaN(lastMessageDate.getTime())) {\n    const timeDifferenceMs = now.getTime() - lastMessageDate.getTime();\n    const fifteenMinutesInMs = 15 * 60 * 1000;\n\n    if (timeDifferenceMs > fifteenMinutesInMs) {\n      isLastMessageOlderThan15Minutes = true;\n    }\n  }\n}\n\n// El nodo Code debe devolver un array de objetos.\nreturn [{\n  json: {\n    chat_history: formattedHistory,\n    lastMessageOlderThan15Minutes: isLastMessageOlderThan15Minutes,\n    chatName: $('Encontrar Nombre Hoja').first().json.userName\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1632,
+        -608
+      ],
+      "id": "9aa87876-0c1d-4b0d-aa23-ef417cb0d6a5",
+      "name": "Parse Memorias"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Obtenemos la lista completa de items que vienen del nodo anterior.\nconst items = $input.all();\n\n// 1. Usamos .map() para crear un array de JavaScript simple, sin la envoltura \"json\".\nconst listaDeClientes = items.map(item => {\n  \n  // 'item.json' es el objeto que contiene todos los datos de una fila.\n  const clienteData = item.json;\n\n  // Extraemos el nombre del cliente.\n  const nombreCliente = clienteData.Cliente;\n  const prioridad = clienteData.Prioridad\n  const producto = clienteData.Producto\n  const proveedores = clienteData[\"Contacto Proveedores\"]\n  const res1 = clienteData[\"Responsable 1\"]\n  const res2 = clienteData[\"Responsable 2\"]\n  const momento = clienteData.Momento\n\n  // Aplicamos la lógica condicional para la fecha.\n  const fechaInicio = clienteData[\"Fecha Inicio\"] ? clienteData[\"Fecha Inicio\"] : $now.toFormat('yyyy-MM-dd');\n\n  // Devolvemos el objeto JavaScript simple.\n  return {\n    \"Cliente\": nombreCliente,\n    \"Fecha Inicio\": fechaInicio,\n    \"Prioridad\" : prioridad,\n    \"Producto\" : producto,\n    \"Contacto Proveedores\" : proveedores,\n    \"Responsable 1\" : res1,\n    \"Responsable 2\" : res2,\n    \"Momento\" : momento\n  };\n});\n\n// 2. Ahora, envolvemos TODO el array 'listaDeClientes' en un único objeto de salida de n8n.\nreturn [{\n  json: {\n    \"listaCompleta\": listaDeClientes\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1696,
+        240
+      ],
+      "id": "e9ce91a8-ac04-4bc8-a33c-d30d67d4ffcb",
+      "name": "Parse Data Excel"
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2144,
+        -288
+      ],
+      "id": "c0c2a3f6-061c-450c-ba52-d263759ffeb4",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        2032,
+        -64
+      ],
+      "id": "57e5d98e-5b2f-46db-ad3b-6873295e2266",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1024,
+        -32
+      ],
+      "id": "d7634f74-33ae-4b87-a7c8-2d4186eae42d",
+      "name": "Aggregate1"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"cliente_encontrado\": true,\n  \"cliente\": \"Nombre del Cliente\",\n  \"fecha_inicio\": \"valor o null\",\n  \"prioridad\": \"valor o null\",\n  \"producto\": \"valor o null\",\n  \"responsable_1\": \"valor o null\",\n  \"responsable_2\": \"valor o null\",\n  \"momento\": \"valor o null\",\n  \"contacto_proveedores\" : \"valor o null\"\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        2288,
+        192
+      ],
+      "id": "8404bfdb-94ee-4324-8eca-47fcf12ede0d",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        2400,
+        352
+      ],
+      "id": "8a9c7077-f3e5-4908-8a3b-03a295bfd087",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "HYv5xKaJeSjLiOWz",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1WITKgrlHXZiuNnnXXs98aTRlI1ZKSanLuKsYDTiEAts",
+          "mode": "list",
+          "cachedResultName": "Memorias_Chatbot",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1WITKgrlHXZiuNnnXXs98aTRlI1ZKSanLuKsYDTiEAts/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "={{ $('Merge2').item.json.userName }}",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "UserId": "Bot",
+            "UserName": "SolbitaSolutions",
+            "Role": "Chatbot",
+            "Content": "Enviame el cliente por favor",
+            "TimeStamp": "={{ $('Aggregate').item.json.data[1].userAndMessage.timestamp }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "UserId",
+              "displayName": "UserId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "UserName",
+              "displayName": "UserName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "TimeStamp",
+              "displayName": "TimeStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Role",
+              "displayName": "Role",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Content",
+              "displayName": "Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        3040,
+        144
+      ],
+      "id": "b7e4d777-8566-44c4-a7ef-d312d0126360",
+      "name": "Cargar Mensaje Bot",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "P2yPGMz7LMWjag0k",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1HoAP_7sJ13ZeFJjLrAeLQz_le9NgYI11mqIvbW8W6Ss",
+          "mode": "list",
+          "cachedResultName": "Excel Organizativo",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HoAP_7sJ13ZeFJjLrAeLQz_le9NgYI11mqIvbW8W6Ss/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HoAP_7sJ13ZeFJjLrAeLQz_le9NgYI11mqIvbW8W6Ss/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Cliente": "={{ $('AI Agent').item.json.output.cliente }}",
+            "Producto": "={{ $('AI Agent').item.json.output.producto }}",
+            "Prioridad": "={{ $('AI Agent').item.json.output.prioridad }}",
+            "Contacto Proveedores": "={{ $('AI Agent').item.json.output.contacto_proveedores }}",
+            "Responsable 1": "={{ $('AI Agent').item.json.output.responsable_1 }}",
+            "Responsable 2": "={{ $('AI Agent').item.json.output.responsable_2 }}",
+            "Momento": "={{ $('AI Agent').item.json.output.momento }}",
+            "Fecha Inicio": "={{ $json[\"Fecha Inicio\"] ? $json[\"Fecha Inicio\"] : $now.toFormat('yyyy-MM-dd') }}",
+            "Fecha Ultima Actualizacion": "=  {{ $today.format('yyyy-MM-dd') }}"
+          },
+          "matchingColumns": [
+            "Cliente"
+          ],
+          "schema": [
+            {
+              "id": "Prioridad",
+              "displayName": "Prioridad",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Cliente",
+              "displayName": "Cliente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Producto",
+              "displayName": "Producto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Contacto Proveedores",
+              "displayName": "Contacto Proveedores",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Responsable 1",
+              "displayName": "Responsable 1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Responsable 2",
+              "displayName": "Responsable 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Momento",
+              "displayName": "Momento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Fecha Inicio",
+              "displayName": "Fecha Inicio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Fecha Ultima Actualizacion",
+              "displayName": "Fecha Ultima Actualizacion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        2912,
+        -48
+      ],
+      "id": "77bce875-eab9-4665-b7ac-47f8c018e903",
+      "name": "Cargar Datos Organizativos",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "P2yPGMz7LMWjag0k",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nfor (const item of items) {\n  // Itera sobre todas las claves (propiedades) del objeto JSON de cada elemento\n  for (const key in item.json) {\n    // Asegúrate de que la propiedad pertenezca directamente al objeto y no a su prototipo\n    if (Object.prototype.hasOwnProperty.call(item.json, key)) {\n      // Si el valor de la propiedad es null, cámbialo a 'no ingresados'\n      if (item.json[key] === null || item.json[key] === \"null\") { // Agregamos \"null\" como string por si viene así\n        item.json[key] = 'no ingresado';\n      }\n    }\n  }\n}\n\nreturn items;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3056,
+        -128
+      ],
+      "id": "df202d86-2ff8-45ca-9b87-0f73960efd10",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1WITKgrlHXZiuNnnXXs98aTRlI1ZKSanLuKsYDTiEAts",
+          "mode": "list",
+          "cachedResultName": "Memorias_Chatbot",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1WITKgrlHXZiuNnnXXs98aTRlI1ZKSanLuKsYDTiEAts/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "={{ $json.userName }}",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "UserId": "={{ $('Aggregate').item.json.data[1].userAndMessage.message.from.id }}",
+            "UserName": "={{ $('Aggregate').item.json.data[1].userAndMessage.message.from.first_name }} {{ $('Aggregate').item.json.data[1].userAndMessage.message.from.last_name }}",
+            "TimeStamp": "={{ $('Aggregate').item.json.data[1].userAndMessage.timestamp }}",
+            "Role": "User",
+            "Content": "={{ $('Aggregate').item.json.data[1].userAndMessage.current_message.text || $('Aggregate').item.json.data[1].userAndMessage.current_message }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "UserId",
+              "displayName": "UserId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "UserName",
+              "displayName": "UserName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "TimeStamp",
+              "displayName": "TimeStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Role",
+              "displayName": "Role",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Content",
+              "displayName": "Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        2816,
+        -192
+      ],
+      "id": "2eda2f5a-12bb-472a-b663-8e46ca915436",
+      "name": "Cargar Memoria User",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "P2yPGMz7LMWjag0k",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "documentId": {
+          "__rl": true,
+          "value": "1WITKgrlHXZiuNnnXXs98aTRlI1ZKSanLuKsYDTiEAts",
+          "mode": "list",
+          "cachedResultName": "Memorias_Chatbot",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1WITKgrlHXZiuNnnXXs98aTRlI1ZKSanLuKsYDTiEAts/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "={{ $('Parse Memorias').item.json.chatName }}",
+          "mode": "name"
+        },
+        "numberToDelete": "={{ $json.row_number }}"
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        2128,
+        -576
+      ],
+      "id": "1c19bbd4-649a-4aea-9f2e-b089ebe6b5b3",
+      "name": "Eliminar memoria",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "P2yPGMz7LMWjag0k",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1WITKgrlHXZiuNnnXXs98aTRlI1ZKSanLuKsYDTiEAts",
+          "mode": "list",
+          "cachedResultName": "Memorias_Chatbot",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1WITKgrlHXZiuNnnXXs98aTRlI1ZKSanLuKsYDTiEAts/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "={{ $json.chatName }}",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        1872,
+        -640
+      ],
+      "id": "93671ae6-d9df-40a7-ad09-363b290971c9",
+      "name": "Encontrar cantidad de filas",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "P2yPGMz7LMWjag0k",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Obtiene todos los elementos que vienen del nodo anterior (Google Sheets)\nconst allItems = $input.all();\n\n// Verifica si el array no está vacío para evitar errores\nif (allItems.length > 0) {\n  // Retorna un nuevo array que contiene solamente el último elemento.\n  // 'allItems.length - 1' da el índice del último elemento en un array.\n  return [allItems[allItems.length - 1]];\n} else {\n  // Si el array está vacío, retorna un array vacío o un mensaje de error,\n  // dependiendo de cómo quieras manejar esa situación.\n  return [];\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1888,
+        -400
+      ],
+      "id": "83384a3d-40f4-4647-906e-5df77cf34bd9",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1WITKgrlHXZiuNnnXXs98aTRlI1ZKSanLuKsYDTiEAts",
+          "mode": "list",
+          "cachedResultName": "Memorias_Chatbot",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1WITKgrlHXZiuNnnXXs98aTRlI1ZKSanLuKsYDTiEAts/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "={{ $('Merge2').item.json.userName }}",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "UserId": "={{ $('Aggregate').item.json.data[1].userAndMessage.message.from.id }}",
+            "Content": "=Perfecto! Se guardaron los siguientes datos:\n\nCliente : {{ $json.Cliente }}\n\nMomento : {{ $json.Momento }}\n\nResponsable 1: {{ $json['Responsable 1'] }}\n\nResponsable 2: {{ $json['Responsable 2'] }}\n\nContacto Proveedores: {{ $json['Contacto Proveedores'] }}\n\nProducto: {{ $json.Producto }}\n\nPrioridad: {{ $json.Prioridad }}\n\n\nSi quieres cargar un nuevo proceso o modificar el proceso del cliente anterior, por favor vuelve a enviarme un texto o audio comenzando con el nombre del cliente.\n\nDe lo contrario, si no necesitas cargar ningun otro proceso, por favor no respondas a este mensaje. ",
+            "Role": "Chatbot",
+            "TimeStamp": "={{ $('Aggregate').item.json.data[1].userAndMessage.timestamp }}",
+            "UserName": "SolbitaSolutions"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "UserId",
+              "displayName": "UserId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "UserName",
+              "displayName": "UserName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "TimeStamp",
+              "displayName": "TimeStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Role",
+              "displayName": "Role",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Content",
+              "displayName": "Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        3168,
+        -208
+      ],
+      "id": "66775173-d2d4-48a9-bea2-05a3e94ff28c",
+      "name": "Memoria Bot",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "P2yPGMz7LMWjag0k",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "text": "=Perfecto! Se guardaron los siguientes datos:\n\nCliente : {{ $json.Cliente }}\n\nMomento : {{ $json.Momento }}\n\nResponsable 1: {{ $json['Responsable 1'] }}\n\nResponsable 2: {{ $json['Responsable 2'] }}\n\nContacto Proveedores: {{ $json['Contacto Proveedores'] }}\n\nProducto: {{ $json.Producto }}\n\nPrioridad: {{ $json.Prioridad }}\n\n\nSi quieres cargar un nuevo proceso o modificar el proceso del cliente anterior, por favor vuelve a enviarme un texto o audio comenzando con el nombre del cliente.\n\nDe lo contrario, si no necesitas cargar ningun otro proceso, por favor no respondas a este mensaje. ",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3200,
+        -32
+      ],
+      "id": "2d6adb38-296b-4f6e-8934-d8c424ac93d9",
+      "name": "Responder al User",
+      "webhookId": "009519a1-dd3b-4d53-bf01-f2d91ccb1e48",
+      "credentials": {
+        "telegramApi": {
+          "id": "PXS2ShGXVcFSRF7r",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "text": "Enviame el cliente por favor",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3200,
+        144
+      ],
+      "id": "0f7e774c-b5df-493e-a062-6d037e0ea078",
+      "name": "Rta mensaje no encontrado",
+      "webhookId": "281b8ab6-0bdc-4e6f-abca-473d3f5d1c3d",
+      "credentials": {
+        "telegramApi": {
+          "id": "PXS2ShGXVcFSRF7r",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const nombres = {\n  'Fran': 706685534, \n  'Tito': 123321, \n  'Topo': 321123, \n  'Mateo': 3455543, \n  'Mosca': 98213, \n  'Katu': 8108985282\n};\n\nconst outputItems = [];\nconst chatId = $('Telegram Trigger').first().json.message.chat.id; // Ya tienes el chatId aquí\n\n// Función auxiliar para determinar el tipo de datos que estamos procesando\nfunction getDataType(data) {\n  if (Array.isArray(data)) {\n    return 'telegram_messages'; // Array de mensajes de Telegram\n  }\n  \n  if (data && typeof data === 'object' && (data.promptTokenCount || data.modelVersion || data.responseId)) {\n    return 'api_response'; // Respuesta de API como Gemini\n  }\n  \n  return 'unknown';\n}\n\n// Función auxiliar para buscar el nombre por chatId\nfunction findNameByChatId(chatId) {\n  for (const name in nombres) {\n    if (nombres[name] === chatId) {\n      return name;\n    }\n  }\n  return null;\n}\n\n// Buscar el nombre una sola vez usando el chatId del trigger\nconst foundName = findNameByChatId(chatId);\n\n// Iteramos sobre cada item que el nodo anterior entrega a este nodo\nfor (const inputItem of $input.all()) {\n  // Verificamos si existe la propiedad 'json'\n  if (!inputItem.json) {\n    outputItems.push({\n      json: {\n        error: \"No 'json' property found in input\",\n        originalInput: inputItem,\n        userName: foundName || 'Desconocido',\n        chatId: chatId\n      }\n    });\n    continue;\n  }\n  \n  const dataType = getDataType(inputItem.json.data);\n  \n  if (dataType === 'telegram_messages') {\n    // Caso 1: Array de mensajes de Telegram (tu caso original de texto)\n    if (Array.isArray(inputItem.json.data) && inputItem.json.data.length > 0) {\n      for (const telegramUpdate of inputItem.json.data) {\n        const newItem = {\n          json: {\n            ...telegramUpdate, // Copia todo el contenido del update de Telegram\n            userName: foundName || 'Desconocido',\n            chatId: chatId,\n            dataType: 'telegram_message'\n          }\n        };\n        \n        outputItems.push(newItem);\n      }\n    } else {\n      // Array vacío o no válido\n      outputItems.push({\n        json: {\n          error: \"Empty or invalid telegram messages array\",\n          originalInput: inputItem.json,\n          userName: foundName || 'Desconocido',\n          chatId: chatId,\n          dataType: 'telegram_message_error'\n        }\n      });\n    }\n    \n  } else if (dataType === 'api_response') {\n    // Caso 2: Respuesta de API (como Gemini para audio)\n    const newItem = {\n      json: {\n        ...inputItem.json.data, // Copia todo el contenido de la respuesta de API\n        userName: foundName || 'Desconocido',\n        chatId: chatId,\n        dataType: 'api_response'\n      }\n    };\n    \n    outputItems.push(newItem);\n    \n  } else {\n    // Caso 3: Estructura desconocida\n    outputItems.push({\n      json: {\n        error: \"Unknown data structure\",\n        originalInput: inputItem.json,\n        userName: foundName || 'Desconocido',\n        chatId: chatId,\n        dataType: 'unknown'\n      }\n    });\n  }\n}\n\nreturn outputItems;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1168,
+        -224
+      ],
+      "id": "272a63e9-ad6b-4bbc-b580-367645776eb7",
+      "name": "Encontrar Nombre Hoja"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ed96563f-21e9-4459-a6f9-4bd262fc4d8d",
+              "name": "userName",
+              "value": "={{ $json.userName }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1376,
+        -560
+      ],
+      "id": "7151dd65-54c6-4eff-9ea5-8c723b0d64db",
+      "name": "Memoria"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.output.cliente_encontrado }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "id": "f7da3ae4-ad56-4525-b0ef-74a7a4ccdc1a"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "cliente encontrado"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d4bb0ca5-008c-4ccb-b1c6-9ed84426aebb",
+                    "leftValue": "={{ $json.output.cliente_encontrado }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "false",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "cliente no encontrado"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        2656,
+        48
+      ],
+      "id": "173d1875-0fbb-4b89-b564-f830d86e371e",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.lastMessageOlderThan15Minutes }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "id": "6a445cb1-529c-4f05-9365-f7ce38112d0d"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "msj old"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "b44e07fc-bd03-4e85-8240-462cff9e3c37",
+                    "leftValue": "={{ $json.lastMessageOlderThan15Minutes }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "false",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "chat corriente"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1648,
+        -368
+      ],
+      "id": "68e4c30a-9079-46ab-9129-508c201181e1",
+      "name": "Switch Msj Old"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2576,
+        -224
+      ],
+      "id": "9616f58f-1b3f-4fed-82d6-bb0314859e76",
+      "name": "Merge2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "44c364de-b375-4b91-b02d-7e8d843642e1",
+              "name": "userName",
+              "value": "={{ $json.userName }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1696,
+        -128
+      ],
+      "id": "195132f5-5d04-43cb-9d88-4b8ca3cbdee4",
+      "name": "Memoria 2"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1WITKgrlHXZiuNnnXXs98aTRlI1ZKSanLuKsYDTiEAts",
+          "mode": "list",
+          "cachedResultName": "Memorias_Chatbot",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1WITKgrlHXZiuNnnXXs98aTRlI1ZKSanLuKsYDTiEAts/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "={{ $json.userName }}",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "UserId": "={{ $('Aggregate').item.json.data[1].userAndMessage.message.from.id }}",
+            "UserName": "={{ $('Aggregate').item.json.data[1].userAndMessage.message.from.first_name }} {{ $('Aggregate').item.json.data[1].userAndMessage.message.from.last_name }}",
+            "TimeStamp": "={{ $('Aggregate').item.json.data[1].userAndMessage.timestamp }}",
+            "Role": "User",
+            "Content": "={{ $('Aggregate').item.json.data[1].userAndMessage.current_message.text || $('Aggregate').item.json.data[1].userAndMessage.current_message }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "UserId",
+              "displayName": "UserId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "UserName",
+              "displayName": "UserName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "TimeStamp",
+              "displayName": "TimeStamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Role",
+              "displayName": "Role",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Content",
+              "displayName": "Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        2864,
+        160
+      ],
+      "id": "7b412307-f263-4364-9d73-74bcb81e43ae",
+      "name": "Cargar Memoria User1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "P2yPGMz7LMWjag0k",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get a file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a file": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Aggregate1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obtener Data Excel Organizativo": {
+      "main": [
+        [
+          {
+            "node": "Parse Data Excel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obtener nombre usuario y mensaje": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Obtener Memorias": {
+      "main": [
+        [
+          {
+            "node": "Parse Memorias",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Memorias": {
+      "main": [
+        [
+          {
+            "node": "Switch Msj Old",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Data Excel": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate1": {
+      "main": [
+        [
+          {
+            "node": "Obtener nombre usuario y mensaje",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Obtener Data Excel Organizativo",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Encontrar Nombre Hoja",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Structured Output Parser",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cargar Mensaje Bot": {
+      "main": [
+        [
+          {
+            "node": "Rta mensaje no encontrado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cargar Datos Organizativos": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Responder al User",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Memoria Bot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cargar Memoria User": {
+      "main": [
+        []
+      ]
+    },
+    "Eliminar memoria": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Encontrar cantidad de filas": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Eliminar memoria",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Responder al User": {
+      "main": [
+        []
+      ]
+    },
+    "Encontrar Nombre Hoja": {
+      "main": [
+        [
+          {
+            "node": "Memoria",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Memoria 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rta mensaje no encontrado": {
+      "main": [
+        []
+      ]
+    },
+    "Memoria": {
+      "main": [
+        [
+          {
+            "node": "Obtener Memorias",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Cargar Memoria User",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Cargar Datos Organizativos",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Cargar Memoria User1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch Msj Old": {
+      "main": [
+        [
+          {
+            "node": "Encontrar cantidad de filas",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge2": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Memoria 2": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Cargar Memoria User1": {
+      "main": [
+        [
+          {
+            "node": "Cargar Mensaje Bot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "adb22730-a41e-4f21-ab9e-8eab95316f56",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e86d7659620b07aa2cc64b599ef5151faa91e798f873d2a933a0c9cbcc5ecab2"
+  },
+  "id": "Qy3ILkaEI4Juf2aZ",
+  "tags": []
+}
